@@ -27,10 +27,19 @@ class Document(BaseModel):
     date: Optional[str] = None
     pages: List[Page]
 
+
+def filter_footer(lines: List[str]) -> List[str]:
+    """Filters out footer lines and trailing page number from the list of lines."""
+    filtered_lines = [line for line in lines if not line.startswith("Page") and not line.startswith("©")]
+    return filtered_lines
+
 def extract_text_from_page(page) -> str:
-    """Extracts clean text from a page."""
+    """Extracts clean text from a page, excluding footer data and trailing page number."""
     text = page.get_text("text")
-    return text.strip()
+    lines = text.split("\n")
+    filtered_lines = filter_footer(lines)
+    clean_text = "\n".join(filtered_lines).strip()
+    return clean_text
 
 def extract_title_from_text(text: str) -> Optional[str]:
     """Simple method to extract title, assuming the title is at the start of the text."""
@@ -113,9 +122,11 @@ def extract_images_from_page(page) -> List[str]:
 def process_pdf(pdf_path: str) -> Document:
     """Main function to process the PDF and extract data."""
     doc = fitz.open(pdf_path)
-    document_title = doc.metadata.get('title', 'Untitled Document')
-    author = doc.metadata.get('author', None)
-    date = doc.metadata.get('creationDate', None)
+    
+    # Extract document title and author from metadata
+    document_title = doc.metadata.get("title", "Untitled Document")
+    author = doc.metadata.get("author", None)
+    date = doc.metadata.get("creationDate", None)
     
     pages = []
     for page_number in range(doc.page_count):
@@ -151,7 +162,7 @@ def save_to_json(document: Document, output_file: str):
         json.dump(document.model_dump(), f, indent=4)
 
 # Example usage:
-pdf_path = "2409.13731v3.pdf"  # Replace with your PDF file path
+pdf_path = "ConceptsofBiology-WEB-1-68.pdf"  # Replace with your PDF file path
 output_json_path = "output.json"  # Output JSON file path
 
 document = process_pdf(pdf_path)

@@ -51,7 +51,7 @@ def extract_title_from_text(text: str) -> Optional[str]:
 def extract_tables_from_page(page) -> List[Table]:
     """Extract tables from a page using PyMuPDF's table detection."""
     tables = []
-    # Use PyMuPDF's find_tables method to detect tables
+    # detect tables using PyMuPDF's find_tables method
     detected_tables = page.find_tables()
 
     previous_table_name = None
@@ -72,25 +72,25 @@ def extract_tables_from_page(page) -> List[Table]:
         # Access the bounding rectangle of the table
         table_rect = table.bbox  # Use the correct attribute or method to get the bounding box
         
-        # Find text blocks below the table
+        # Finding text blocks below the table for table name
         for block in text_blocks:
             block_rect = fitz.Rect(block[:4])
-            if block_rect.y0 > table_rect[3]:  # Check if the block is below the table
+            if block_rect.y0 > table_rect[3]:  # Checking if the block is below the table
                 potential_name = block[4].strip()
                 if potential_name.startswith("Table") or potential_name.startswith("Figure"):
                     table_name = potential_name
                     break
         
-        # Check if the current table should be merged with the previous one
+        # Checking if the table has been extracted before or was fragmented
         if previous_table_name and previous_table_name == table_name:
-            # Check if the first row of the current table is the same as the columns of the previous table
+            # Checking if the first row of the current table is the same as the columns of the previous table
             if columns != previous_table_obj.columns:
-                # If different, treat the first row as a new set of columns
+                # If different, treating the first row as a new set of columns
                 previous_table_obj.rows.append(columns)
-            # Merge the current table with the previous one
+            # Merging the current table with the previous one
             previous_table_obj.rows.extend(rows)
         else:
-            # Create a new Table object
+            # Creating a new Table object
             table_obj = Table(table_name=table_name, columns=columns, rows=rows)
             tables.append(table_obj)
             previous_table_name = table_name
@@ -99,7 +99,7 @@ def extract_tables_from_page(page) -> List[Table]:
     return tables
 
 def extract_images_from_page(page) -> List[str]:
-    """Extract images from a page and return them as base64 strings."""
+    # Extracting images from a page and returning them as base64 strings for better memory management and json storage
     images_base64 = []
     img_list = page.get_images(full=True)
     
@@ -120,10 +120,10 @@ def extract_images_from_page(page) -> List[str]:
     return images_base64
 
 def process_pdf(pdf_path: str) -> Document:
-    """Main function to process the PDF and extract data."""
+    # Main function to process the PDF and extract data
     doc = fitz.open(pdf_path)
     
-    # Extract document title and author from metadata
+    # Extracting document title and author from metadata
     document_title = doc.metadata.get("title", "Untitled Document")
     author = doc.metadata.get("author", None)
     date = doc.metadata.get("creationDate", None)
@@ -132,7 +132,7 @@ def process_pdf(pdf_path: str) -> Document:
     for page_number in range(doc.page_count):
         page = doc.load_page(page_number)
         
-        # Extract text, tables, and images from the page
+        # Extracting text, tables, and images from the page
         text = extract_text_from_page(page)
         title = extract_title_from_text(text)
         tables = extract_tables_from_page(page)
@@ -157,12 +157,12 @@ def process_pdf(pdf_path: str) -> Document:
     return document
 
 def save_to_json(document: Document, output_file: str):
-    """Saves the document to a JSON file."""
+    # Saving the document to a JSON file
     with open(output_file, "w") as f:
         json.dump(document.model_dump(), f, indent=4)
 
-# Example usage:
-pdf_path = "ConceptsofBiology-WEB-1-68.pdf"  # Replace with your PDF file path
+
+pdf_path = "ConceptsofBiology-WEB-1-68.pdf"  # PDF file path
 output_json_path = "output.json"  # Output JSON file path
 
 document = process_pdf(pdf_path)

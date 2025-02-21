@@ -1,5 +1,4 @@
 import fitz  # PyMuPDF
-import json
 from document_parser.extractors import (
     extract_text_from_page,
     extract_title_from_text,
@@ -45,7 +44,3 @@ def process_pdf(pdf_path: str) -> Document:
     
     return document
 
-def save_to_json(document: Document, output_file: str):
-    """Saves the Document model to a JSON file."""
-    with open(output_file, "w") as f:
-        json.dump(document.model_dump(), f, indent=4) 

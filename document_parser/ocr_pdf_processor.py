@@ -49,8 +49,3 @@ def process_scanned_pdf(pdf_path: str) -> Document:
         pages=pages
     )
     return document
-
-def save_to_json(document: Document, output_file: str):
-    """Saves the Document model to a JSON file."""
-    with open(output_file, "w") as f:
-        json.dump(document.model_dump(), f, indent=4) 

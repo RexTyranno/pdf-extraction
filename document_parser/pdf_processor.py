@@ -9,14 +9,15 @@ from document_parser.extractors import (
 from document_parser.models import Document, Page
 
 def process_pdf(pdf_path: str) -> Document:
-    """Processes the PDF and extracts its contents into a Document model."""
+    #Fitz is used to open the PDF and extract metadata
     doc = fitz.open(pdf_path)
     
-    # Extract metadata
+    # Extracting metadata from the PDF
     document_title = doc.metadata.get("title", "Untitled Document")
     author = doc.metadata.get("author", None)
     date = doc.metadata.get("creationDate", None)
     
+    # Processing each page of the PDF
     pages = []
     for page_number in range(doc.page_count):
         page = doc.load_page(page_number)

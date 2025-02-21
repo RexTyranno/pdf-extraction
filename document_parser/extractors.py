@@ -4,12 +4,12 @@ from typing import List, Optional
 from document_parser.models import Image, Table
 
 def filter_footer(lines: List[str]) -> List[str]:
-    """Filters out footer lines and trailing page number from the list of lines."""
+    # Filtering out footer lines and trailing page number from the list of lines
     filtered_lines = [line for line in lines if not line.startswith("Page") and not line.startswith("©")]
     return filtered_lines
 
 def extract_text_from_page(page) -> str:
-    """Extracts clean text from a page, excluding footer data and trailing page number."""
+    # Extracting clean text from a page, excluding footer data and trailing page number
     text = page.get_text("text")
     lines = text.split("\n")
     filtered_lines = filter_footer(lines)
@@ -17,14 +17,14 @@ def extract_text_from_page(page) -> str:
     return clean_text
 
 def extract_title_from_text(text: str) -> Optional[str]:
-    """Simple method to extract title, assuming the title is at the start of the text."""
+    # Assuming that the title is the first line of the text
     lines = text.split("\n")
     if lines:
         return lines[0].strip()
     return None
 
 def extract_tables_from_page(page) -> List[Table]:
-    """Extract tables from a page using PyMuPDF's table detection."""
+    # Using PyMuPDF's table detection method to extract tables
     tables = []
     detected_tables = page.find_tables()
 
@@ -32,7 +32,7 @@ def extract_tables_from_page(page) -> List[Table]:
     previous_table_obj = None
 
     for table_index, table in enumerate(detected_tables.tables):
-        # Extract the table content
+        # Extracting the table content
         table_content = table.extract()
         
         # Assuming the first row is the header
@@ -69,7 +69,7 @@ def extract_tables_from_page(page) -> List[Table]:
     return tables
 
 def extract_images_from_page(page) -> List[Image]:
-    """Extract images from a page and return them as Image objects with base64 encoded PNG."""
+    # Extracting images from a page and returning them as Image objects with base64 encoded PNG
     images_base64 = []
     img_list = page.get_images(full=True)
     
@@ -77,7 +77,7 @@ def extract_images_from_page(page) -> List[Image]:
         xref = img[0]
         base_image = fitz.Pixmap(page.parent, xref)
         
-        # Convert to RGB if the image is not already grayscale or RGB
+        # Convert to RGB if the image is not already grayscale or RGB   
         if base_image.colorspace.name not in ["DeviceGray", "DeviceRGB"]:
             base_image = fitz.Pixmap(fitz.csRGB, base_image)
         

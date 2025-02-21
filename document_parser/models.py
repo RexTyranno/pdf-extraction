@@ -1,6 +1,8 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
+
+# Defining the models for the data
 class Image(BaseModel):
     image_base64: str
 

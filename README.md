@@ -98,5 +98,3 @@ Run the tool from the command line. The main script (`main.py`) accepts the foll
 
 4. **Saving the Output:**
    - The structured Document (with pages, text, images, etc.) is saved as JSON using the helper function in `document_parser/save_to_json.py`.
-
-This clear separation of functionality into modules makes the codebase modular and extensible. Enjoy using the PDF Document Parser, and feel free to contribute or raise issues on the repository!

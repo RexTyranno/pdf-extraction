@@ -16,7 +16,6 @@ class Page(BaseModel):
     text: str
     title: Optional[str] = None
     tables: List[Table] = []
-    images: List[Image] = []
     
 class Document(BaseModel):
     document_title: str

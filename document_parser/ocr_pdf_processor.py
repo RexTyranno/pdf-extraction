@@ -25,20 +25,13 @@ def process_scanned_pdf(pdf_path: str) -> Document:
         text = pytesseract.image_to_string(pil_image)
         title = extract_title_from_text(text)
         
-        # PIL image to PNG bytes and then encode in base64
-        buffered = BytesIO()
-        pil_image.save(buffered, format="PNG")
-        img_bytes = buffered.getvalue()
-        encoded_img = base64.b64encode(img_bytes).decode("utf-8")
-        image_model = ImageModel(image_base64=encoded_img)
-        
         #returning empty tables as OCR-based table extraction is non-trivial
         page_data = Page(
             page_number=i + 1,
             text=text,
             title=title,
             tables=[],          # OCR-based table extraction not implemented
-            images=[image_model]
+            images=[]
         )
         pages.append(page_data)
     

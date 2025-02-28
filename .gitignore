@@ -1,5 +1,6 @@
 .venv
-output.json
+*.json
 *.pdf
+*.zip
 trial.py
 __pycache__
